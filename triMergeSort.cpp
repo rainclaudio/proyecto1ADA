@@ -85,27 +85,28 @@ int main(int argc, char const *argv[]) {
     std::cerr<<"could not open input";
     exit(1);
   }
-  float *A = new float(10000000);
+float *A = new float[10000000];
   float var = 0;
   long long num = 0;
-  while(reader >> A[num]){
+  while(reader >> var){
+    float r2 = static_cast <float> (rand()) / (static_cast <float> (RAND_MAX));
+    A[num] = r2;
     num++;
   }
-  std::cout << "hola?" << '\n';
-  std::cout << var << '\n';
+
   auto start = std::chrono::high_resolution_clock::now();
   Tri_MergeSort(A,0,num-1);
   auto finish = std::chrono::high_resolution_clock::now();
+  auto d = std::chrono::duration_cast<std::chrono::nanoseconds> (finish - start).count();
+
   for(int i = 0; i < num; ++i){
     std::cout << A[i] << ' ';
   }
+  std::cout <<"total time "<< d << " [ns]" << " \n";
   std::cout << '\n';
 
-
-  auto d = std::chrono::duration_cast<std::chrono::nanoseconds> (finish - start).count();
-  std::cout <<"total time "<< d << " [ns]" << " \n";
-
+  delete A;
   reader.close();
-  writer.close();
+  // writer.close();
   return 0;
 }
