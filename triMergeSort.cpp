@@ -1,7 +1,15 @@
 #include <iostream>
 #include <vector>
-
+#include <fstream>
+#include <chrono>
 typedef std::vector<float> v;
+
+/*
+g++ triMergeSort.cpp -o ejecutable
+.\ejecutable input.txt
+*/
+std::ifstream reader;
+std::ofstream writer;
 v merge_util(v avector, v bvector, int sizea, int sizeb){
   v dvector;
   int i=0,j=0;
@@ -72,6 +80,32 @@ void Tri_MergeSort(float *A,int lb, int ub){
 }
 
 int main(int argc, char const *argv[]) {
-  
+  reader.open(argv[1]);
+  if(!reader){
+    std::cerr<<"could not open input";
+    exit(1);
+  }
+  float *A = new float(10000000);
+  float var = 0;
+  long long num = 0;
+  while(reader >> A[num]){
+    num++;
+  }
+  std::cout << "hola?" << '\n';
+  std::cout << var << '\n';
+  auto start = std::chrono::high_resolution_clock::now();
+  Tri_MergeSort(A,0,num-1);
+  auto finish = std::chrono::high_resolution_clock::now();
+  for(int i = 0; i < num; ++i){
+    std::cout << A[i] << ' ';
+  }
+  std::cout << '\n';
+
+
+  auto d = std::chrono::duration_cast<std::chrono::nanoseconds> (finish - start).count();
+  std::cout <<"total time "<< d << " [ns]" << " \n";
+
+  reader.close();
+  writer.close();
   return 0;
 }
