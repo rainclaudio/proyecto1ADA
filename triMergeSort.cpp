@@ -2,6 +2,7 @@
 #include <vector>
 #include <fstream>
 #include <chrono>
+#include <string>
 typedef std::vector<float> v;
 
 /*
@@ -79,34 +80,65 @@ void Tri_MergeSort(float *A,int lb, int ub){
 	}
 }
 
-int main(int argc, char const *argv[]) {
-  reader.open(argv[1]);
+double expermient(float *A,int tam){
+  int nCases = 20;
+  long long num = 0;
+  long long timeCounter = 0;
+  while (nCases--){
+    num = 0;
+    while(num < tam){
+      float r2 = static_cast <float> (rand()) / (static_cast <float> (RAND_MAX));
+      A[num] = r2;
+      num++;
+    }
+
+    // std::cout << "comenzando" << '\n';
+    auto start = std::chrono::high_resolution_clock::now();
+    Tri_MergeSort(A,0,num-1);
+    auto finish = std::chrono::high_resolution_clock::now();
+    auto d = std::chrono::duration_cast<std::chrono::nanoseconds> (finish - start).count();
+
+    timeCounter += d;
+  }
+  /*std::cout <<"averageTime: "<< ((double)timeCounter)/10 << " [ns]" << " \n";
+  std::cout << '\n';*/
+  return ((double)timeCounter)/10;
+}
+void getInp(float *A,std::string in,std::string out){
+  reader.open(in);
   if(!reader){
     std::cerr<<"could not open input";
     exit(1);
   }
-float *A = new float[10000000];
-  float var = 0;
   long long num = 0;
-  while(reader >> var){
-    float r2 = static_cast <float> (rand()) / (static_cast <float> (RAND_MAX));
-    A[num] = r2;
+  while(reader >> A[num]){
     num++;
   }
+  reader.close();
 
-  auto start = std::chrono::high_resolution_clock::now();
   Tri_MergeSort(A,0,num-1);
-  auto finish = std::chrono::high_resolution_clock::now();
-  auto d = std::chrono::duration_cast<std::chrono::nanoseconds> (finish - start).count();
+  writer.open(out);
 
-  for(int i = 0; i < num; ++i){
-    std::cout << A[i] << ' ';
+  if(!writer){
+    std::cerr<<"could not open ouput";
+    exit(1);
   }
-  std::cout <<"total time "<< d << " [ns]" << " \n";
-  std::cout << '\n';
+
+  for(int i = 0; i < num - 1; ++i){
+    writer << A[i] << '\t';
+//    if(i%100 == 0)writer <<'\n';
+  }
+
+   writer.close();
+}
+int main(int argc, char const *argv[]) {
+
+  float *A = new float[10000000];
+
+  //double average_time =  expermient(A,i*10000);
+  getInp(A,argv[1],argv[2]);
 
   delete A;
-  reader.close();
-  // writer.close();
+
   return 0;
 }
