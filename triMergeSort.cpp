@@ -11,52 +11,71 @@ g++ triMergeSort.cpp -o ejecutable
 */
 std::ifstream reader;
 std::ofstream writer;
-v merge_util(v avector, v bvector, int sizea, int sizeb){
-  v dvector;
-  int i=0,j=0;
-  while (i < sizea && j < sizeb){
-    if(avector[i] <= bvector[j]){
-      dvector.push_back(avector[i]);
-      i++;
-    }
-    else {
-      dvector.push_back(bvector[j]);
-      j++;
-    }
+void printVector(v A, int tam){
+  for (size_t i = 0; i < tam; i++) {
+    std::cout<< A[i] << " ";
   }
-  while (i < sizea){
-    dvector.push_back(avector[i]);
-    i++;
-  }
-
-  while (j < sizeb){
-    dvector.push_back(bvector[j]);
-    j++;
-  }
-  return dvector;
+  std::cout << '\n';
 }
 
 void Merge(float *A, int lb, int mid1,int mid2,int ub){
-  v Av,Bv,Cv;
  int n1 = mid1 - lb +1; // size of Av
- int n2 =  mid2 - mid1; // size of Bv
- int n3 =  ub - mid2; // size of Cv
-  for(int i = 0; i <  n1;++i){
-   Av.push_back(A[lb + i]);
+ int n2 = mid2 - mid1; // size of Bv
+ int n3 = ub - mid2; // size of Cv
+ v Av,Bv,Cv,Dv;
+
+ int i,j;
+  for(i = 0; i <  n1;++i){
+    Av.push_back(A[lb + i]);
   }
-  for(int j = 0; j  < n2; ++j){
+  for(j = 0; j  < n2; ++j){
     Bv.push_back(A[mid1 + 1 + j]);
   }
   for(int k = 0; k < n3; ++k){
     Cv.push_back(A[mid2 + 1 + k]);
   }
-
-  v vecvar = merge_util(Av,Bv,n1,n2);
-  v answer = merge_util(Cv,vecvar,n3,n1+n2);
-  for(int i = 0; i < answer.size(); ++i){
-    A[i+lb] = answer[i];
+  i = j = 0;
+  while (i < n1 && j < n2){
+    if(Av[i] <= Bv[j]){
+      Dv.push_back(Av[i]);
+      i++;
+    }
+    else {
+      Dv.push_back(Bv[i]);
+      j++;
+    }
   }
-
+  while (i < n1){
+    Dv.push_back(Av[i]);
+    i++;
+  }
+  while (j < n2){
+    Dv.push_back(Bv[j]);
+    j++;
+  }
+  i=j=0;
+  int k = lb;
+  while (i < n1 + n2 && j < n3){
+    if(Dv[i] <= Cv[j]){
+      A[k] = Dv[i];
+      i++;
+    }
+    else {
+      A[k] = Cv[j];
+      j++;
+    }
+    k++;
+  }
+  while (i < n1 + n2){
+    A[k] = Dv[i];
+    i++;
+    k++;
+  }
+  while (j < n3){
+    A[k] = Cv[j];
+    j++;
+    k++;
+  }
 }
 
 void Tri_MergeSort(float *A,int lb, int ub){
@@ -104,6 +123,27 @@ double expermient(float *A,int tam){
   std::cout << '\n';*/
   return ((double)timeCounter)/10;
 }
+
+void print_Arr(float *A, int tam){
+  for (size_t i = 0; i < tam; i++) {
+    std::cout<< A[i] << " ";
+  }
+  std::cout  << '\n';
+}
+void random_test(float *A, int tam){
+  int num = 0;
+  while(num < tam){
+    float r2 = ((float)rand() * 10);
+    A[num] = r2;
+    num++;
+  }
+  std::cout << "UNSORTED" << '\n';
+  print_Arr(A,num-1);
+  std::cout << '\n';
+  std::cout << "SORTED" << '\n';
+  Tri_MergeSort(A,0,num-1);
+  print_Arr(A,num-1);
+}
 void getInp(float *A,std::string in,std::string out){
   reader.open(in);
   if(!reader){
@@ -115,8 +155,11 @@ void getInp(float *A,std::string in,std::string out){
     num++;
   }
   reader.close();
-
+  std::cout << "previous: " << '\n';
+  print_Arr(A,num-1);
   Tri_MergeSort(A,0,num-1);
+  std::cout << "merged: " << '\n';
+  print_Arr(A,num-1);
   writer.open(out);
 
   if(!writer){
@@ -133,11 +176,14 @@ void getInp(float *A,std::string in,std::string out){
 }
 int main(int argc, char const *argv[]) {
 
+  // srand(time(NULL));
   float *A = new float[10000000];
-
-  //double average_time =  expermient(A,i*10000);
-  getInp(A,argv[1],argv[2]);
-
+  for(int i = 1; i < 11; ++i){
+    double average_time =  expermient(A,i*10000);
+    std::cout << "averageTime for: "<<i*10000 << "elements: "<< average_time << '\n';
+  }
+//getInp(A,argv[1],argv[2]);
+  //random_test(A,20);
   delete A;
 
   return 0;
