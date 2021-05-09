@@ -127,7 +127,7 @@ void expermient(float *A,int tam){
       verify(A,num - 1);
     }
 
-    std::cout << "averageTime for: "<<i*10000 << "elements: "<< average_time << '\n';
+    std::cout << "averageTime for: "<<i*10000 << "elements: "<< ((double)timeCounter)/nCasescpy << '\n';
   }
 }
 
@@ -190,7 +190,7 @@ int main(int argc, char const *argv[]) {
    std::cout << "Bienvenido! " << '\n';
 
    float *A = new float[10000000];
-
+   expermient(A,10000);
 
    delete A;
 

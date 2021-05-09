@@ -70,29 +70,34 @@ void verify(float *A, int tam){
 
 }
 
-double expermient(float *A,int tam){
-  int nCases = 10;
-  int nCasescpy = nCases;
-  long long num = 0;
+void expermient(float *A,int tam){
   long long timeCounter = 0;
-  while (nCases--){
-    num = 0;
-    while(num < tam){
-      float r2 = static_cast <float> (rand()) / (static_cast <float> (RAND_MAX));
-      A[num] = r2;
-      num++;
+  int nCases,nCasescpy;
+  long long num = 0;
+
+  for(int i = 1; i < 11; ++i){
+    nCases = nCasescpy = 10;
+    while (nCases--){
+      num = 0;
+      while(num < tam*i){
+        float r2 = static_cast <float> (rand()) / (static_cast <float> (RAND_MAX));
+        A[num] = r2;
+        num++;
+      }
+      auto start = std::chrono::high_resolution_clock::now();
+      MergeSort(A,0,num-1);
+      auto finish = std::chrono::high_resolution_clock::now();
+      auto d = std::chrono::duration_cast<std::chrono::nanoseconds> (finish - start).count();
+
+      timeCounter += d;
+      verify(A,num - 1);
     }
 
-    auto start = std::chrono::high_resolution_clock::now();
-    MergeSort(A,0,num-1);
-    auto finish = std::chrono::high_resolution_clock::now();
-    auto d = std::chrono::duration_cast<std::chrono::nanoseconds> (finish - start).count();
-
-    timeCounter += d;
-    verify(A,num - 1);
+    std::cout << "averageTime for: "<<i*10000 << "elements: "<< ((double)timeCounter)/nCasescpy << '\n';
   }
-  return ((double)timeCounter)/nCasescpy;
 }
+
+
 void getInp(float *A,std::string in,std::string out){
   reader.open(in);
   if(!reader){
@@ -142,11 +147,7 @@ int main(int argc, char const *argv[]) {
 
   float *A = new float[10000000];
   srand(time(NULL));
-
-   for(int i = 1; i < 11; ++i){
-     double average_time =  expermient(A,i*10000);
-     std::cout << "averageTime for: "<<i*10000 << "elements: "<< average_time << '\n';
-  }
+  expermient(A,10000);
   delete A;
 
   return 0;
