@@ -11,57 +11,74 @@ g++ triMergeSort.cpp -o ejecutable
 */
 std::ifstream reader;
 std::ofstream writer;
-v merge_util(v avector, v bvector, int sizea, int sizeb){
-  v dvector;
-  int i=0,j=0;
-  while (i < sizea && j < sizeb){
-    if(avector[i] <= bvector[j]){
-      dvector.push_back(avector[i]);
+void mergeVector(v& Av, v& Bv, v& Ev, int n1, int n2){
+  int i,j;
+  i = j = 0;
+  while (i < n1 && j < n2){
+    if(Av[i] <= Bv[j]){
+      Ev.push_back(Av[i]);
       i++;
     }
     else {
-      dvector.push_back(bvector[j]);
+      Ev.push_back(Bv[j]);
       j++;
     }
   }
-  while (i < sizea){
-    dvector.push_back(avector[i]);
+  while (i < n1){
+    Ev.push_back(Av[i]);
     i++;
   }
-
-  while (j < sizeb){
-    dvector.push_back(bvector[j]);
+  while (j < n2){
+    Ev.push_back(Bv[j]);
     j++;
   }
-  return dvector;
 }
-
 void Merge(float *A, int lb, int midleft,int midCentral,int midright,int ub){
-  v Av,Bv,Cv,Dv;
+  v Av,Bv,Cv,Dv,Ev,Fv;
   // MODIFICAR
- int n1 = midleft - lb +1; // size of Av
+ int n1 =  midleft - lb +1; // size of Av
  int n2 =  midCentral - midleft; // size of Bv
  int n3 =  midright - midCentral; // size of Cv
- int n4 = ub - midright;
-  for(int i = 0; i <  n1;++i){
+ int n4 =  ub - midright;
+ int i,j,k;
+  for(i = 0; i <  n1;++i){
    Av.push_back(A[lb + i]);
   }
-  for(int j = 0; j  < n2; ++j){
+  for(j = 0; j  < n2; ++j){
     Bv.push_back(A[midleft + 1 + j]);
   }
-  for(int k = 0; k < n3; ++k){
-    Cv.push_back(A[midCentral + 1 + k]);
+  for(k = 0; k < n3; ++k){
+    Dv.push_back(A[midCentral + 1 + k]);
   }
-  for(int k = 0; k < n4; ++k){
-    Dv.push_back(A[midright + 1 + k]);
+  for(k = 0; k < n4; ++k){
+    Ev.push_back(A[midright + 1 + k]);
   }
 
-  v vecvar1 = merge_util(Av,Bv,n1,n2);
-  v vecvar2 = merge_util(Cv,Dv,n3,n4);
-  v answer = merge_util(vecvar1,vecvar2,n1+n2,n3+n4);
+  mergeVector(Av,Bv,Cv,n1,n2);
+  mergeVector(Dv,Ev,Fv,n3,n4);
 
-  for(int i = 0; i < answer.size(); ++i){
-    A[i+lb] = answer[i];
+  i = j = 0;
+  k = lb;
+  while (i < n1 + n2 && j < n3 + n4){
+    if(Cv[i] <= Fv[j]){
+      A[k] = Cv[i];
+      i++;
+    }
+    else {
+      A[k] = Fv[j];
+      j++;
+    }
+    k++;
+  }
+  while (i < n1 + n2){
+    A[k] = Cv[i];
+    i++;
+    k++;
+  }
+  while (j < n3 + n4){
+    A[k] = Fv[j];
+    j++;
+    k++;
   }
 
 }
@@ -137,15 +154,29 @@ void quad_MergeSort(float *A,int lb, int ub){
     }
 }
 
+void verify(float *A, int tam){
+  bool isTrue = true;
+  for (size_t i = 1; i < tam; i++) {
+    if(A[i] < A[i - 1]){
+      std::cout << "CATCH ERROR EXEPTION" << '\n';
+      std::cout << "A[i - 1] A[i]: "<<A[i - 1]<<" "<<A[i] << '\n';
+      break;
+    }
+  }
+  // std::cout  << '\n';
+
+}
 
 double expermient(float *A,int tam){
-  int nCases = 20;
+  int nCases = 10;
+  int nCasescpy = nCases;
   long long num = 0;
   long long timeCounter = 0;
   while (nCases--){
     num = 0;
     while(num < tam){
       float r2 = static_cast <float> (rand()) / (static_cast <float> (RAND_MAX));
+      // variable r2 = (rand()%15) + 1;
       A[num] = r2;
       num++;
     }
@@ -157,6 +188,7 @@ double expermient(float *A,int tam){
     auto d = std::chrono::duration_cast<std::chrono::nanoseconds> (finish - start).count();
 
     timeCounter += d;
+    verify(A,num - 1);
   }
   /*std::cout <<"averageTime: "<< ((double)timeCounter)/10 << " [ns]" << " \n";
   std::cout << '\n';*/
@@ -189,13 +221,41 @@ void getInp(float *A,std::string in,std::string out){
 
    writer.close();
 }
+
+void print_Arr(float *A, int tam){
+  for (size_t i = 0; i < tam; i++) {
+    std::cout<< A[i] << " ";
+  }
+  std::cout  << '\n';
+}
+
+void random_test(float *A, int tam){
+  int num = 0;
+  while(num < tam){
+    float r2 = rand()%15 * 10;
+    // float r2 = static_cast <float> (rand()) / (static_cast <float> (RAND_MAX));
+
+    A[num] = r2;
+    num++;
+  }
+  // std::cout << "UNSORTED, num: "<<num << '\n';
+  // print_Arr(A,num);
+  // std::cout << '\n';
+  // std::cout << "SORTED" << '\n';
+  quad_MergeSort(A,0,num-1);
+   verify(A,num);
+  // print_Arr(A,num);
+}
+
 int main(int argc, char const *argv[]) {
 
   float *A = new float[10000000];
+  srand(time(NULL));
 
-  //double average_time =  expermient(A,i*10000);
-  getInp(A,argv[1],argv[2]);
-
+   for(int i = 1; i < 11; ++i){
+     double average_time =  expermient(A,i*10000);
+     std::cout << "averageTime for: "<<i*10000 << "elements: "<< average_time << '\n';
+  }
   delete A;
 
   return 0;
