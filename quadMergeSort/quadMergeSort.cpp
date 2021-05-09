@@ -86,15 +86,18 @@ void compare(float *A, float n1, float n2, float n3,int lb){
   if(n1 < n2){
     if(n1 < n3){
       if(n2 < n3){
+        // swap
         A[lb] = n1;
         A[lb + 1] = n2;
         A[lb + 2] = n3;
       } else {
+        // swap
         A[lb] = n1;
         A[lb + 1] = n3;
         A[lb + 2] = n2;
       }
     } else {
+      // swap
       A[lb] = n3;
       A[lb + 1] = n1;
       A[lb + 2] = n2;
@@ -102,15 +105,18 @@ void compare(float *A, float n1, float n2, float n3,int lb){
   } else {
     if(n2 < n3){
       if(n1 < n3){
+        // swap
         A[lb] = n2;
         A[lb + 1] = n1;
         A[lb + 2] = n3;
       } else{
+        // swap
         A[lb] = n2;
         A[lb + 1] = n3;
         A[lb + 2] = n1;
       }
     } else {
+      // swap
       A[lb] = n3;
       A[lb + 1] = n2;
       A[lb + 2] = n1;
@@ -158,12 +164,11 @@ void verify(float *A, int tam){
   bool isTrue = true;
   for (size_t i = 1; i < tam; i++) {
     if(A[i] < A[i - 1]){
-      std::cout << "CATCH ERROR EXEPTION" << '\n';
+      std::cout << "CATCH ERROR EXCEPTION" << '\n';
       std::cout << "A[i - 1] A[i]: "<<A[i - 1]<<" "<<A[i] << '\n';
       break;
     }
   }
-  // std::cout  << '\n';
 
 }
 
@@ -176,12 +181,10 @@ double expermient(float *A,int tam){
     num = 0;
     while(num < tam){
       float r2 = static_cast <float> (rand()) / (static_cast <float> (RAND_MAX));
-      // variable r2 = (rand()%15) + 1;
       A[num] = r2;
       num++;
     }
 
-    // std::cout << "comenzando" << '\n';
     auto start = std::chrono::high_resolution_clock::now();
     quad_MergeSort(A,0,num-1);
     auto finish = std::chrono::high_resolution_clock::now();
@@ -190,9 +193,7 @@ double expermient(float *A,int tam){
     timeCounter += d;
     verify(A,num - 1);
   }
-  /*std::cout <<"averageTime: "<< ((double)timeCounter)/10 << " [ns]" << " \n";
-  std::cout << '\n';*/
-  return ((double)timeCounter)/10;
+  return ((double)timeCounter)/nCasescpy;
 }
 void getInp(float *A,std::string in,std::string out){
   reader.open(in);
@@ -233,18 +234,12 @@ void random_test(float *A, int tam){
   int num = 0;
   while(num < tam){
     float r2 = rand()%15 * 10;
-    // float r2 = static_cast <float> (rand()) / (static_cast <float> (RAND_MAX));
-
+    float r2 = static_cast <float> (rand()) / (static_cast <float> (RAND_MAX));
     A[num] = r2;
     num++;
   }
-  // std::cout << "UNSORTED, num: "<<num << '\n';
-  // print_Arr(A,num);
-  // std::cout << '\n';
-  // std::cout << "SORTED" << '\n';
   quad_MergeSort(A,0,num-1);
-   verify(A,num);
-  // print_Arr(A,num);
+  verify(A,num);
 }
 
 int main(int argc, char const *argv[]) {
@@ -255,7 +250,7 @@ int main(int argc, char const *argv[]) {
    for(int i = 1; i < 11; ++i){
      double average_time =  expermient(A,i*10000);
      std::cout << "averageTime for: "<<i*10000 << "elements: "<< average_time << '\n';
-  }
+   }
   delete A;
 
   return 0;
