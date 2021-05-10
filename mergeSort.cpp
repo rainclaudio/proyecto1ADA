@@ -9,8 +9,7 @@ typedef std::vector<float> v;
 g++ triMergeSort.cpp -o ejecutable
 .\ejecutable input.txt
 */
-std::ifstream reader;
-std::ofstream writer;
+
 void Merge(float *A, int lb, int mid, int ub){
   v Av,Bv;
   // MODIFICAR
@@ -56,99 +55,4 @@ void MergeSort(float *A,int lb, int ub){
 	MergeSort(A,mid + 1, ub);
 	Merge(A,lb,mid,ub);
 	}
-}
-
-void verify(float *A, int tam){
-  bool isTrue = true;
-  for (size_t i = 1; i < tam; i++) {
-    if(A[i] < A[i - 1]){
-      std::cout << "CATCH ERROR EXEPTION" << '\n';
-      std::cout << "A[i - 1] A[i]: "<<A[i - 1]<<" "<<A[i] << '\n';
-      break;
-    }
-  }
-
-}
-
-void expermient(float *A,int tam){
-  long long timeCounter = 0;
-  int nCases,nCasescpy;
-  long long num = 0;
-
-  for(int i = 1; i < 11; ++i){
-    nCases = nCasescpy = 10;
-    while (nCases--){
-      num = 0;
-      while(num < tam*i){
-        float r2 = static_cast <float> (rand()) / (static_cast <float> (RAND_MAX));
-        A[num] = r2;
-        num++;
-      }
-      auto start = std::chrono::high_resolution_clock::now();
-      MergeSort(A,0,num-1);
-      auto finish = std::chrono::high_resolution_clock::now();
-      auto d = std::chrono::duration_cast<std::chrono::nanoseconds> (finish - start).count();
-
-      timeCounter += d;
-      verify(A,num - 1);
-    }
-
-    std::cout << "averageTime for: "<<i*10000 << "elements: "<< ((double)timeCounter)/nCasescpy << '\n';
-  }
-}
-
-
-void getInp(float *A,std::string in,std::string out){
-  reader.open(in);
-  if(!reader){
-    std::cerr<<"could not open input";
-    exit(1);
-  }
-  long long num = 0;
-  while(reader >> A[num]){
-    num++;
-  }
-  reader.close();
-
-  MergeSort(A,0,num-1);
-  writer.open(out);
-
-  if(!writer){
-    std::cerr<<"could not open ouput";
-    exit(1);
-  }
-
-  for(int i = 0; i < num - 1; ++i){
-    writer << A[i] << '\t';
-  }
-
-   writer.close();
-}
-
-void print_Arr(float *A, int tam){
-  for (size_t i = 0; i < tam; i++) {
-    std::cout<< A[i] << " ";
-  }
-  std::cout  << '\n';
-}
-
-void random_test(float *A, int tam){
-  int num = 0;
-  while(num < tam){
-     float r2 = static_cast <float> (rand()) / (static_cast <float> (RAND_MAX));
-    A[num] = r2;
-    num++;
-  }
-  MergeSort(A,0,num-1);
-   verify(A,num);
-}
-
-int main(int argc, char const *argv[]) {
-
-  float *A = new float[10000000];
-  srand(time(NULL));
-  expermient(A,10000);
-  delete A;
-
-  return 0;
 }
